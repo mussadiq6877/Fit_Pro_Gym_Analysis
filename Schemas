@@ -1,0 +1,31 @@
+
+-- creating scehemas of fit pro
+-- fit pro Gym Analysis
+-- creating members table
+drop table if exists members, visits, memberships;
+create table members(
+	member_id int primary key,
+	name varchar(20) 
+);
+
+-- creating memberships table
+create table memberships(member_id int primary key, --forign_key
+	age int,
+	gender char(5),
+	membership_type varchar(15),
+	join_date date,
+	status varchar(30), 
+foreign key (member_id) references members(member_id)
+); 
+
+--- creating table visits
+create table visits(
+	visit_id int primary key,
+	member_id int,
+	visit_date date,
+	check_in_time time,
+	check_out_time time, 
+foreign key (member_id) references members(member_id)
+);
+
+--- end of schemas of fit_pro_Gym
