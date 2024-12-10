@@ -1,0 +1,303 @@
+-- fit pro Gym Analysis 
+---01Retrieve the name and membership_type of members who are female (gender = 'F')
+. 
+
+select
+	m.name,
+	m1.membership_type,
+	m1.gender
+from members as m
+join
+memberships as m1
+on m.member_id = m1.member_id 
+where m1.gender = 'F' 
+
+--02Find all members who have a Monthly membership type and have joined after 2023-11-01.
+select * from memberships
+select
+	m1.membership_type,
+	m.name, 
+	m1.join_date
+from members as m
+join
+memberships as m1
+on m.member_id = m1.member_id  
+where membership_type = 'Monthly' 
+and
+join_date > '2023-11-01'
+
+--03Retrieve the name and status of members who have an Active status and are aged above 25.
+select 
+	m.name,
+	m1.status,
+	m1.age
+from members as m
+join
+memberships as m1
+on m.member_id = m1.member_id  
+where m1.status = 'Active'
+and
+m1.age > '25' 
+
+--04Retrieve the details of visits made by members with visit_date = '2024-01-01'. 
+select *
+from members as m
+join
+visits as v
+on m.member_id = v.member_id 
+where visit_date = '2024-01-01' 
+
+--- 05Get the list of members who have a Quarterly membership type and are aged between 20 and 30.
+select * from memberships
+select
+	m.name,
+	m1.membership_type,
+	m1.age	
+from members as m
+join
+memberships as m1
+on m.member_id = m1.member_id  
+where m1.membership_type = 'Quaterly'
+and 
+m1.age between 25 and 30  
+
+-- 06Find the total number of visits made by each member, grouping by member_id.
+select
+     member_id,
+    count(visit_id) as total_visits
+from visits
+group by member_id 
+order by 2 desc 
+
+--07Retrieve the count of members by membership_type (e.g., how many Monthly, Weekly, and Quarterly members there are).
+select
+   membership_type,
+   count(member_id) as total_members_by_membership_type
+from memberships
+group by 1 
+order by 2 desc 
+
+--08Get the average age of members, grouped by their membership_type.
+select 
+   avg(age) as avg_age,
+   membership_type
+from memberships
+group by 2 
+
+--09Find the total number of visits for each visit_date (group by the visit date).
+select
+    visit_date,
+	count(visit_id) as total_visits
+from visits
+group by 1
+
+--10Retrieve the number of members with each status (Active or Cancelled), grouped by status.
+select 
+   count(member_id) as total,
+   status
+from 
+memberships
+group by 2 
+
+---11Retrieve the top 3 members who have made the most visits, only showing name and total_visits, and order by total_visits in descending order.
+
+select 
+	  m.name,
+	  count(v.visit_id)
+from members as m
+join
+visits as v
+on m.member_id = v.member_id 
+group by 1
+having count(v.visit_id)>3 
+limit 3 
+
+--12Find the number of members with a Monthly membership who are Active, grouped by membership_type, and limit the result to the top 2 most recent join dates.
+select * from memberships
+select 
+    count(member_id) as total_members,
+    membership_type,
+    status
+from memberships 
+where membership_type = 'Monthly' 
+and status = 'Active' 
+group by 2,3
+order by max(join_date) desc
+limit 2
+	
+
+--13Get the total number of visits for each member who has more than 2 visits, ordered by total_visits, and display only the first 5 members. 
+select 
+	count(v.visit_id) as total_visits, 
+	m.name
+from members as m
+join 
+visits as v 
+on m.member_id = v.member_id
+group by 2 
+having count(v.visit_id)>=2
+order by total_visits desc
+limit 5;  
+
+--14Retrieve the number of members who have joined in 2023, grouped by membership_type, where the total number of members in each group is more than 100. 
+select 
+     count(member_id) as total_members,
+	 membership_type
+from memberships
+where extract(year from join_date) = 2023
+group by 2
+having count(member_id)>100; 
+
+--15Find the average age of members who have Active membership status, grouped by membership_type, ordered by membership_type alphabetically, and limit the result to 3.
+select
+     avg(age) as avg_age,
+	 membership_type
+from memberships
+where status = 'Active'
+group by 2 
+order by membership_type desc 
+limit 3
+
+--16Retrieve all details of members who have a Cancelled membership.
+select * 
+from members as m
+join 
+memberships as m1
+on m.member_id = m1.member_id 
+where status = 'Cancelled' 
+
+--17Find all members who are Male and have a Weekly membership type, and order the result by join_date.
+select 
+	 *
+from members as m
+join 
+memberships as m1
+on m.member_id = m1.member_id  
+where gender = 'M' 
+and membership_type = 'Weekly' 
+order by join_date asc; 
+
+--18Get a list of distinct member ages 
+select 
+    distinct age
+from memberships; 
+
+--19Retrieve the name, membership_type, and join_date of all members who joined after 2023-10-01, ordered by join_date in ascending order.
+select 
+	m.name,
+	m1.membership_type,
+	m1.join_date
+from members as m
+join 
+memberships as m1
+on m.member_id = m1.member_id
+where join_date > '2023-10-01'
+group by 1,2,3
+order by join_date asc 
+
+--20Count the total number of visits made by each member, grouping by member_id.
+select
+     count(visit_id) as total_visits,
+     member_id
+from visits
+group by 2 
+order by 1 desc 
+
+---21Retrieve the membership_type and the count of members for each membership type.
+select 
+   count(member_id) as totals, 
+   membership_type
+from
+memberships
+group by 2
+select * from memberships
+--22Get the names and ages of members who have a Monthly membership and are younger than 25, using WHERE. 
+select 
+	m.name,
+	m1.age
+from members as m
+join
+memberships as m1
+on m.member_id = m1.member_id 
+where membership_type = 'Monthly'
+and age > 25; 
+
+select  * from visits
+--23Retrieve the number of visits for each visit_date, ordered by visit_date.
+select
+   count(visit_id) as total_visit,
+   visit_date
+from visits
+group by 2
+order by visit_date 
+select * from memberships
+--24Find the average age of members who have a Quarterly membership type. 
+select
+     avg (age),
+     membership_type
+from memberships
+where membership_type = 'Quarterly'
+group by membership_type
+
+--25Retrieve the name, membership_type, and status of members who are Active and Monthly, ordered by status.
+select
+     m.name,
+     m1.membership_type,
+     m1.status
+from members as m
+join
+memberships as m1
+on m.member_id = m1.member_id
+where m1.status = 'Active'
+and
+m1.membership_type = 'Monthly' 
+group by 1,2,3
+order by status
+
+--26Count the number of members with each membership_type, using GROUP BY and HAVING to show only those with more than 1 member 
+select
+    membership_type,
+	count(member_id) as totals
+from memberships
+group by 1
+having  count(member_id)>1  
+
+--27Find the name of the member who has made the most visits, ordered by total_visits. 
+select
+     m.name,
+     count(v.visit_id) as total_visits
+from members as m
+join
+visits as v
+on m.member_id = v.member_id
+group by 1
+order by 2 desc
+
+--28Retrieve the list of name and status of members who have Cancelled status and joined before 2023-11-01, and limit the result to 3 rows. 
+select *
+from members as m
+join
+memberships as m1
+on m.member_id = m1.member_id
+where status = 'Cancelled'
+and
+join_date < '2023-11-01'
+limit 3; 
+
+--29Find the average age of members with Active status, grouped by membership_type.
+select
+  membership_type,
+  avg(age) as avg_ages
+from memberships
+where status = 'Active'
+group by 1
+
+--30Retrieve all visit details (date, check-in, check-out) for the first 5 visits, ordered by visit_date in descending order.
+select 
+*
+from visits
+order by visit_date desc
+limit 5
+
+
+
